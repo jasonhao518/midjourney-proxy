@@ -9,10 +9,7 @@ import com.github.novicezk.midjourney.result.Message;
 import com.github.novicezk.midjourney.result.SubmitResultVO;
 import com.github.novicezk.midjourney.support.Task;
 import com.github.novicezk.midjourney.util.MimeTypeUtils;
-
-import cn.hutool.core.codec.Base64;
 import eu.maxschuster.dataurl.DataUrl;
-import eu.maxschuster.dataurl.DataUrlEncoding;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -117,17 +114,12 @@ public class TaskServiceImpl implements TaskService {
 		return discordInstance.submitTask(task, () -> {
 			List<String> finalFileNames = new ArrayList<>();
 			for (DataUrl dataUrl : dataUrls) {
-				if("text/url".equals(dataUrl.getMimeType())){
-					log.info("url: {}", new String(dataUrl.getData()));
-					finalFileNames.add(new String(dataUrl.getData()));
-				}else {
-					String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
-					Message<String> uploadResult = discordInstance.upload(taskFileName, dataUrl);
-					if (uploadResult.getCode() != ReturnCode.SUCCESS) {
-						return Message.of(uploadResult.getCode(), uploadResult.getDescription());
-					}
-					finalFileNames.add(uploadResult.getResult());
+				String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
+				Message<String> uploadResult = discordInstance.upload(taskFileName, dataUrl);
+				if (uploadResult.getCode() != ReturnCode.SUCCESS) {
+					return Message.of(uploadResult.getCode(), uploadResult.getDescription());
 				}
+				finalFileNames.add(uploadResult.getResult());
 			}
 			return discordInstance.blend(finalFileNames, dimensions, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
 		});
