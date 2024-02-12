@@ -118,6 +118,7 @@ public class TaskServiceImpl implements TaskService {
 			List<String> finalFileNames = new ArrayList<>();
 			for (DataUrl dataUrl : dataUrls) {
 				if("url".equals(dataUrl.getMimeType())){
+					log.info("url: {}", new String(dataUrl.getData()));
 					finalFileNames.add(new String(dataUrl.getData()));
 				}else {
 					String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
