@@ -117,7 +117,7 @@ public class TaskServiceImpl implements TaskService {
 		return discordInstance.submitTask(task, () -> {
 			List<String> finalFileNames = new ArrayList<>();
 			for (DataUrl dataUrl : dataUrls) {
-				if("url".equals(dataUrl.getMimeType())){
+				if("text/url".equals(dataUrl.getMimeType())){
 					log.info("url: {}", new String(dataUrl.getData()));
 					finalFileNames.add(new String(dataUrl.getData()));
 				}else {
